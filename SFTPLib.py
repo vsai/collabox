@@ -1,6 +1,7 @@
 #input
 import paramiko
 import getpass
+from stat import S_ISDIR
 
 
 class SFTPServer():
@@ -31,11 +32,23 @@ class SFTPServer():
 	def deleteFile(self, file_path):
 		self.sftp.remove(file_path)
 
-	def ls(self, dir_path=None):
+	def ls(self, dir_path=None, onlyDirectories=False):
 		if dir_path:
-			return self.sftp.listdir(dir_path)
+			lst = self.sftp.listdir(dir_path)
 		else:
-			return self.sftp.listdir()
+			lst = self.sftp.listdir()
+
+		if onlyDirectories:
+			return filter(self.isDir, lst)
+		else:
+			return lst
+
+	def isDir(self, path):
+		try:
+			return S_ISDIR(self.sftp.stat(path).st_mode)
+  		except IOError:
+    		#Path does not exist, so by definition not a directory
+			return False
 
 	def close(self):
 		if self.transport.is_active():
@@ -55,5 +68,5 @@ pwd = getpass.getpass("password of %s: " % uname)
 s = SFTPServer(username=uname, password=pwd, hostname=hname, port=port)
 # s.createFolder("/Users/vishalsaidaswani/hello_world")
 # s.download("/Users/vishalsaidaswani/Desktop/github keyart.png", "/Users/vishalsaidaswani/a.png")
-print s.ls()
+s.ls()
 s.close()

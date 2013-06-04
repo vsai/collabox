@@ -1,15 +1,18 @@
 #input
 import paramiko
 import getpass
+from abstractAccount import *
 from stat import S_ISDIR
 
 
-class SFTPServer():
-	def __init__(self, username, password, hostname, port=22):
+class SFTPServer(AbstractAcct):
+	def __init__(self, hostname, port=22):
+		import getpass
+		uname = getpass.getuser()
+		pwd = getpass.getpass("password of %s: " % uname)
 		self.transport = paramiko.Transport((hostname, port))
-		self.transport.connect(username=username, password=password)
+		self.transport.connect(username=uname, password=pwd)
 		self.sftp = paramiko.SFTPClient.from_transport(self.transport)
-
 
 	def pwd(self):
 		return self.sftp.getcwd()
@@ -55,18 +58,3 @@ class SFTPServer():
 			self.sftp.close()
 			self.transport.close()
 
-
-
-hname = '127.0.0.1'
-port = 22
-uname = getpass.getuser()
-# uname = raw_input("username to connect to: ")
-pwd = getpass.getpass("password of %s: " % uname)
-
-
-
-s = SFTPServer(username=uname, password=pwd, hostname=hname, port=port)
-# s.createFolder("/Users/vishalsaidaswani/hello_world")
-# s.download("/Users/vishalsaidaswani/Desktop/github keyart.png", "/Users/vishalsaidaswani/a.png")
-s.ls()
-s.close()

@@ -1,15 +1,18 @@
 #input
 import paramiko
+import private
 import getpass
 from abstractAccount import *
 from stat import S_ISDIR
 
 
 class SFTPServer(AbstractAcct):
-	def __init__(self, hostname, port=22):
-		import getpass
-		uname = getpass.getuser()
+	def __init__(self, hostname=private.SFTPhostname, port=22):
+		uname = raw_input('Input username:')
+		if (uname == ''): #use default username
+			uname = private.SFTPusername
 		pwd = getpass.getpass("password of %s: " % uname)
+
 		self.transport = paramiko.Transport((hostname, port))
 		self.transport.connect(username=uname, password=pwd)
 		self.sftp = paramiko.SFTPClient.from_transport(self.transport)

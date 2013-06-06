@@ -1,5 +1,5 @@
 import uuid
-
+import private
 import SFTPLib
 import DropboxLib
 
@@ -28,8 +28,8 @@ def deleteAccount(acct_id):
 	return
 
 
-hname = '127.0.0.1'
-port = 22
+hname = private.SFTPhostname
+port = private.SFTPportnum
 
 # s = SFTPLib.SFTPServer(username=uname, password=pwd, hostname=hname, port=port)
 # s.createFolder("/Users/vishalsaidaswani/hello_world")
